@@ -1,0 +1,18 @@
+{
+    "name": "UGF.Database.Runtime.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:91cb856ce6bccf64c9ee2982194560d4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
