@@ -4,13 +4,13 @@ UGF.Database
 
 ## Info
 
-- **Version**: `0.0.0-preview`
+- **Version**: `0.1.0-preview`
 - **Unity**: `2020.2`
 - **API Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
 
-- N/A
+- `com.ugf.description`: `2.0.0`
 
 
 ### Description
