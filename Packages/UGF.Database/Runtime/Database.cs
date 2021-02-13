@@ -7,7 +7,7 @@ namespace UGF.Database.Runtime
     {
         public void Set(TKey key, TValue value)
         {
-            if (!OnTrySet(key, value))
+            if (!TrySet(key, value))
             {
                 throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
             }
@@ -20,7 +20,7 @@ namespace UGF.Database.Runtime
 
         public async Task SetAsync(TKey key, TValue value)
         {
-            if (!await OnTrySetAsync(key, value))
+            if (!await TrySetAsync(key, value))
             {
                 throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
             }

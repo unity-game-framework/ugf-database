@@ -7,7 +7,7 @@ namespace UGF.Database.Runtime
     {
         public void Set(object key, object value)
         {
-            if (!OnTrySet(key, value))
+            if (!TrySet(key, value))
             {
                 throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
             }
@@ -15,12 +15,15 @@ namespace UGF.Database.Runtime
 
         public bool TrySet(object key, object value)
         {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
             return OnTrySet(key, value);
         }
 
         public async Task SetAsync(object key, object value)
         {
-            if (!await OnTrySetAsync(key, value))
+            if (!await TrySetAsync(key, value))
             {
                 throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
             }
@@ -28,6 +31,9 @@ namespace UGF.Database.Runtime
 
         public Task<bool> TrySetAsync(object key, object value)
         {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
             return OnTrySetAsync(key, value);
         }
 
@@ -38,6 +44,8 @@ namespace UGF.Database.Runtime
 
         public bool TryGet(object key, out object value)
         {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
             return OnTryGet(key, out value);
         }
 
@@ -50,6 +58,8 @@ namespace UGF.Database.Runtime
 
         public Task<DatabaseGetAsyncResult> TryGetAsync(object key)
         {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
             return OnTryGetAsync(key);
         }
 
