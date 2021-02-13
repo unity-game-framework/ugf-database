@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.ugf.package.name": {
-      "version": "file:Package",
+    "com.ugf.database": {
+      "version": "file:UGF.Database",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
