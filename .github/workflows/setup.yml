@@ -39,9 +39,9 @@ jobs:
         ref: ${{ env.branch }}
     - name: Setup
       run: |
-        path=$(find "Packages" -name "UGF.*" -type d)
+        packagePath=$(find "Packages" -name "package.json" -type f)
 
-        echo "packagePath=$path/package.json" >> $GITHUB_ENV
+        echo "packagePath=$packagePath" >> $GITHUB_ENV
     - name: Config
       uses: unity-game-framework-actions/file-access@master
       id: config
