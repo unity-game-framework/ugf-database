@@ -4,7 +4,7 @@ namespace UGF.Database.Runtime
 {
     public interface IDatabase<TKey, TValue> : IDatabase
     {
-        event DatabaseValueHandler<TKey, TValue> Changed;
+        new event DatabaseValueHandler<TKey, TValue> Changed;
 
         void Set(TKey key, TValue value);
         bool TrySet(TKey key, TValue value);
