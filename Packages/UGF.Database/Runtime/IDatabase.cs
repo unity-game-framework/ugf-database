@@ -4,6 +4,8 @@ namespace UGF.Database.Runtime
 {
     public interface IDatabase
     {
+        event DatabaseValueHandler Changed;
+
         void Set(object key, object value);
         bool TrySet(object key, object value);
         Task SetAsync(object key, object value);

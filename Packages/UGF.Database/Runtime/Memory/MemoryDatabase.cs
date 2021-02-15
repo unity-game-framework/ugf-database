@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace UGF.Database.Runtime.Memory
 {
     public class MemoryDatabase : Database<string, object>, IEnumerable<KeyValuePair<string, object>>
     {
+        public IReadOnlyDictionary<string, object> Values { get; }
+
         private readonly Dictionary<string, object> m_values = new Dictionary<string, object>();
+
+        public MemoryDatabase()
+        {
+            Values = new ReadOnlyDictionary<string, object>(m_values);
+        }
 
         public Dictionary<string, object>.Enumerator GetEnumerator()
         {

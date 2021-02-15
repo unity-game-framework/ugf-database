@@ -2,8 +2,10 @@
 
 namespace UGF.Database.Runtime
 {
-    public interface IDatabase<in TKey, TValue> : IDatabase
+    public interface IDatabase<TKey, TValue> : IDatabase
     {
+        event DatabaseValueHandler<TKey, TValue> Changed;
+
         void Set(TKey key, TValue value);
         bool TrySet(TKey key, TValue value);
         Task SetAsync(TKey key, TValue value);

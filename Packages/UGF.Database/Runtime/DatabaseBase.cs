@@ -5,6 +5,8 @@ namespace UGF.Database.Runtime
 {
     public abstract class DatabaseBase : IDatabase
     {
+        public event DatabaseValueHandler Changed;
+
         public void Set(object key, object value)
         {
             if (!TrySet(key, value))
@@ -18,7 +20,13 @@ namespace UGF.Database.Runtime
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            return OnTrySet(key, value);
+            if (OnTrySet(key, value))
+            {
+                Changed?.Invoke(key, value);
+                return true;
+            }
+
+            return false;
         }
 
         public async Task SetAsync(object key, object value)
@@ -29,12 +37,18 @@ namespace UGF.Database.Runtime
             }
         }
 
-        public Task<bool> TrySetAsync(object key, object value)
+        public async Task<bool> TrySetAsync(object key, object value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            return OnTrySetAsync(key, value);
+            if (await OnTrySetAsync(key, value))
+            {
+                Changed?.Invoke(key, value);
+                return true;
+            }
+
+            return false;
         }
 
         public object Get(object key)

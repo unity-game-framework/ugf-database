@@ -5,6 +5,8 @@ namespace UGF.Database.Runtime
 {
     public abstract class Database<TKey, TValue> : DatabaseBase, IDatabase<TKey, TValue>
     {
+        public new event DatabaseValueHandler<TKey, TValue> Changed;
+
         public void Set(TKey key, TValue value)
         {
             if (!TrySet(key, value))
@@ -15,7 +17,13 @@ namespace UGF.Database.Runtime
 
         public bool TrySet(TKey key, TValue value)
         {
-            return OnTrySet(key, value);
+            if (OnTrySet(key, value))
+            {
+                Changed?.Invoke(key, value);
+                return true;
+            }
+
+            return false;
         }
 
         public async Task SetAsync(TKey key, TValue value)
@@ -26,9 +34,15 @@ namespace UGF.Database.Runtime
             }
         }
 
-        public Task<bool> TrySetAsync(TKey key, TValue value)
+        public async Task<bool> TrySetAsync(TKey key, TValue value)
         {
-            return OnTrySetAsync(key, value);
+            if (await OnTrySetAsync(key, value))
+            {
+                Changed?.Invoke(key, value);
+                return true;
+            }
+
+            return false;
         }
 
         public TValue Get(TKey key)
