@@ -1,7 +1,7 @@
 {
   "name": "com.ugf.database",
   "displayName": "UGF.Database",
-  "version": "0.1.0-preview",
+  "version": "1.0.0-preview",
   "unity": "2020.2",
   "apiCompatibility": ".NET Standard 2.0",
   "description": "Provides utilities to work with data as database.",
