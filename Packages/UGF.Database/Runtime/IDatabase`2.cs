@@ -4,6 +4,8 @@ namespace UGF.Database.Runtime
 {
     public interface IDatabase<TKey, TValue> : IDatabase
     {
+        new event DatabaseValueHandler<TKey, TValue> Added;
+        new event DatabaseKeyHandler<TKey> Removed;
         new event DatabaseValueHandler<TKey, TValue> Changed;
 
         void Add(TKey key, TValue value);

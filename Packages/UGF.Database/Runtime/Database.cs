@@ -5,26 +5,44 @@ namespace UGF.Database.Runtime
 {
     public abstract class Database<TKey, TValue> : DatabaseBase, IDatabase<TKey, TValue>
     {
+        public new event DatabaseValueHandler<TKey, TValue> Added;
+        public new event DatabaseKeyHandler<TKey> Removed;
         public new event DatabaseValueHandler<TKey, TValue> Changed;
 
         public void Add(TKey key, TValue value)
         {
             OnAdd(key, value);
+
+            Added?.Invoke(key, value);
         }
 
-        public Task AddAsync(TKey key, TValue value)
+        public async Task AddAsync(TKey key, TValue value)
         {
-            return OnAddAsync(key, value);
+            await OnAddAsync(key, value);
+
+            Added?.Invoke(key, value);
         }
 
         public bool Remove(TKey key)
         {
-            return OnRemove(key);
+            if (OnRemove(key))
+            {
+                Removed?.Invoke(key);
+                return true;
+            }
+
+            return false;
         }
 
-        public Task<bool> RemoveAsync(TKey key)
+        public async Task<bool> RemoveAsync(TKey key)
         {
-            return OnRemoveAsync(key);
+            if (await OnRemoveAsync(key))
+            {
+                Removed?.Invoke(key);
+                return true;
+            }
+
+            return false;
         }
 
         public void Set(TKey key, TValue value)
@@ -92,29 +110,14 @@ namespace UGF.Database.Runtime
             OnAdd((TKey)key, (TValue)value);
         }
 
-        protected override Task OnAddAsync(object key, object value)
-        {
-            return OnAddAsync((TKey)key, (TValue)value);
-        }
-
         protected override bool OnRemove(object key)
         {
             return OnRemove((TKey)key);
         }
 
-        protected override Task<bool> OnRemoveAsync(object key)
-        {
-            return OnRemoveAsync((TKey)key);
-        }
-
         protected override bool OnTrySet(object key, object value)
         {
             return OnTrySet((TKey)key, (TValue)value);
-        }
-
-        protected override Task<bool> OnTrySetAsync(object key, object value)
-        {
-            return OnTrySetAsync((TKey)key, (TValue)value);
         }
 
         protected override bool OnTryGet(object key, out object value)
@@ -127,13 +130,6 @@ namespace UGF.Database.Runtime
 
             value = default;
             return false;
-        }
-
-        protected override async Task<DatabaseGetAsyncResult> OnTryGetAsync(object key)
-        {
-            DatabaseGetAsyncResult<TValue> result = await OnTryGetAsync((TKey)key);
-
-            return result.HasValue ? new DatabaseGetAsyncResult(result.Value) : new DatabaseGetAsyncResult();
         }
 
         protected virtual Task OnAddAsync(TKey key, TValue value)
