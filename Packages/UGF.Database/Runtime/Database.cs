@@ -59,42 +59,18 @@ namespace UGF.Database.Runtime
 
         public void Set(TKey key, TValue value)
         {
-            if (!TrySet(key, value))
-            {
-                throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
-            }
-        }
+            OnSet(key, value);
 
-        public bool TrySet(TKey key, TValue value)
-        {
-            if (OnTrySet(key, value))
-            {
-                Changed?.Invoke(key, value);
-                m_changedHandler?.Invoke(key, value);
-                return true;
-            }
-
-            return false;
+            Changed?.Invoke(key, value);
+            m_changedHandler?.Invoke(key, value);
         }
 
         public async Task SetAsync(TKey key, TValue value)
         {
-            if (!await TrySetAsync(key, value))
-            {
-                throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
-            }
-        }
+            await OnSetAsync(key, value);
 
-        public async Task<bool> TrySetAsync(TKey key, TValue value)
-        {
-            if (await OnTrySetAsync(key, value))
-            {
-                Changed?.Invoke(key, value);
-                m_changedHandler?.Invoke(key, value);
-                return true;
-            }
-
-            return false;
+            Changed?.Invoke(key, value);
+            m_changedHandler?.Invoke(key, value);
         }
 
         public TValue Get(TKey key)
@@ -133,11 +109,11 @@ namespace UGF.Database.Runtime
             return Task.FromResult(result);
         }
 
-        protected virtual Task<bool> OnTrySetAsync(TKey key, TValue value)
+        protected virtual Task OnSetAsync(TKey key, TValue value)
         {
-            bool result = OnTrySet(key, value);
+            OnSet(key, value);
 
-            return Task.FromResult(result);
+            return Task.CompletedTask;
         }
 
         protected virtual Task<DatabaseGetAsyncResult<TValue>> OnTryGetAsync(TKey key)
@@ -149,7 +125,7 @@ namespace UGF.Database.Runtime
 
         protected abstract void OnAdd(TKey key, TValue value);
         protected abstract bool OnRemove(TKey key);
-        protected abstract bool OnTrySet(TKey key, TValue value);
+        protected abstract void OnSet(TKey key, TValue value);
         protected abstract bool OnTryGet(TKey key, out TValue value);
 
         void IDatabase.Add(object key, object value)
@@ -177,19 +153,9 @@ namespace UGF.Database.Runtime
             Set((TKey)key, (TValue)value);
         }
 
-        bool IDatabase.TrySet(object key, object value)
-        {
-            return TrySet((TKey)key, (TValue)value);
-        }
-
         Task IDatabase.SetAsync(object key, object value)
         {
             return SetAsync((TKey)key, (TValue)value);
-        }
-
-        Task<bool> IDatabase.TrySetAsync(object key, object value)
-        {
-            return TrySetAsync((TKey)key, (TValue)value);
         }
 
         object IDatabase.Get(object key)

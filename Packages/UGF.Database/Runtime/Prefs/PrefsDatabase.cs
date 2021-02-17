@@ -30,15 +30,13 @@ namespace UGF.Database.Runtime.Prefs
             return false;
         }
 
-        protected override bool OnTrySet(string key, string value)
+        protected override void OnSet(string key, string value)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));
             if (string.IsNullOrEmpty(value)) throw new ArgumentException("Value cannot be null or empty.", nameof(value));
 
             PlayerPrefs.SetString(key, value);
             PlayerPrefs.Save();
-
-            return true;
         }
 
         protected override bool OnTryGet(string key, out string value)

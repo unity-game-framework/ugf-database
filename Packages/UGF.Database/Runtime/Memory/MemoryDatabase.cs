@@ -36,18 +36,16 @@ namespace UGF.Database.Runtime.Memory
             return m_values.Remove(key);
         }
 
-        protected override bool OnTrySet(string key, object value)
+        protected override void OnSet(string key, object value)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));
 
             m_values[key] = value ?? throw new ArgumentNullException(nameof(value));
-
-            return true;
         }
 
         protected override bool OnTryGet(string key, out object value)
         {
-            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(key));
+            if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(key));
 
             return m_values.TryGetValue(key, out value);
         }

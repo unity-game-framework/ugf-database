@@ -57,46 +57,22 @@ namespace UGF.Database.Runtime
 
         public void Set(object key, object value)
         {
-            if (!TrySet(key, value))
-            {
-                throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
-            }
-        }
-
-        public bool TrySet(object key, object value)
-        {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            if (OnTrySet(key, value))
-            {
-                Changed?.Invoke(key, value);
-                return true;
-            }
+            OnSet(key, value);
 
-            return false;
+            Changed?.Invoke(key, value);
         }
 
         public async Task SetAsync(object key, object value)
         {
-            if (!await TrySetAsync(key, value))
-            {
-                throw new ArgumentException($"Value can not be set by the specified key: '{key}', value:'{value}'.");
-            }
-        }
-
-        public async Task<bool> TrySetAsync(object key, object value)
-        {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            if (await OnTrySetAsync(key, value))
-            {
-                Changed?.Invoke(key, value);
-                return true;
-            }
+            await OnSetAsync(key, value);
 
-            return false;
+            Changed?.Invoke(key, value);
         }
 
         public object Get(object key)
@@ -139,11 +115,11 @@ namespace UGF.Database.Runtime
             return Task.FromResult(result);
         }
 
-        protected virtual Task<bool> OnTrySetAsync(object key, object value)
+        protected virtual Task OnSetAsync(object key, object value)
         {
-            bool result = OnTrySet(key, value);
+            OnSet(key, value);
 
-            return Task.FromResult(result);
+            return Task.CompletedTask;
         }
 
         protected virtual Task<DatabaseGetAsyncResult> OnTryGetAsync(object key)
@@ -155,7 +131,7 @@ namespace UGF.Database.Runtime
 
         protected abstract void OnAdd(object key, object value);
         protected abstract bool OnRemove(object key);
-        protected abstract bool OnTrySet(object key, object value);
+        protected abstract void OnSet(object key, object value);
         protected abstract bool OnTryGet(object key, out object value);
     }
 }
