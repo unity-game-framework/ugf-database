@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace UGF.Database.Runtime.Memory
 {
@@ -22,6 +21,21 @@ namespace UGF.Database.Runtime.Memory
             return m_values.GetEnumerator();
         }
 
+        protected override void OnAdd(string key, object value)
+        {
+            if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            m_values.Add(key, value);
+        }
+
+        protected override bool OnRemove(string key)
+        {
+            if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));
+
+            return m_values.Remove(key);
+        }
+
         protected override bool OnTrySet(string key, object value)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));
@@ -31,23 +45,11 @@ namespace UGF.Database.Runtime.Memory
             return true;
         }
 
-        protected override Task<bool> OnTrySetAsync(string key, object value)
-        {
-            bool result = OnTrySet(key, value);
-
-            return Task.FromResult(result);
-        }
-
         protected override bool OnTryGet(string key, out object value)
         {
             if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(key));
 
             return m_values.TryGetValue(key, out value);
-        }
-
-        protected override Task<DatabaseGetAsyncResult<object>> OnTryGetAsync(string key)
-        {
-            return OnTryGet(key, out object value) ? Task.FromResult(new DatabaseGetAsyncResult<object>(value)) : Task.FromResult(new DatabaseGetAsyncResult<object>());
         }
 
         IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()

@@ -7,6 +7,36 @@ namespace UGF.Database.Runtime
     {
         public event DatabaseValueHandler Changed;
 
+        public void Add(object key, object value)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            OnAdd(key, value);
+        }
+
+        public Task AddAsync(object key, object value)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            return OnAddAsync(key, value);
+        }
+
+        public bool Remove(object key)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
+            return OnRemove(key);
+        }
+
+        public Task<bool> RemoveAsync(object key)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
+            return OnRemoveAsync(key);
+        }
+
         public void Set(object key, object value)
         {
             if (!TrySet(key, value))
@@ -77,6 +107,10 @@ namespace UGF.Database.Runtime
             return OnTryGetAsync(key);
         }
 
+        protected abstract void OnAdd(object key, object value);
+        protected abstract Task OnAddAsync(object key, object value);
+        protected abstract bool OnRemove(object key);
+        protected abstract Task<bool> OnRemoveAsync(object key);
         protected abstract bool OnTrySet(object key, object value);
         protected abstract Task<bool> OnTrySetAsync(object key, object value);
         protected abstract bool OnTryGet(object key, out object value);

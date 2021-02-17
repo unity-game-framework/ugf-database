@@ -7,6 +7,26 @@ namespace UGF.Database.Runtime
     {
         public new event DatabaseValueHandler<TKey, TValue> Changed;
 
+        public void Add(TKey key, TValue value)
+        {
+            OnAdd(key, value);
+        }
+
+        public Task AddAsync(TKey key, TValue value)
+        {
+            return OnAddAsync(key, value);
+        }
+
+        public bool Remove(TKey key)
+        {
+            return OnRemove(key);
+        }
+
+        public Task<bool> RemoveAsync(TKey key)
+        {
+            return OnRemoveAsync(key);
+        }
+
         public void Set(TKey key, TValue value)
         {
             if (!TrySet(key, value))
@@ -67,6 +87,26 @@ namespace UGF.Database.Runtime
             return OnTryGetAsync(key);
         }
 
+        protected override void OnAdd(object key, object value)
+        {
+            OnAdd((TKey)key, (TValue)value);
+        }
+
+        protected override Task OnAddAsync(object key, object value)
+        {
+            return OnAddAsync((TKey)key, (TValue)value);
+        }
+
+        protected override bool OnRemove(object key)
+        {
+            return OnRemove((TKey)key);
+        }
+
+        protected override Task<bool> OnRemoveAsync(object key)
+        {
+            return OnRemoveAsync((TKey)key);
+        }
+
         protected override bool OnTrySet(object key, object value)
         {
             return OnTrySet((TKey)key, (TValue)value);
@@ -96,9 +136,37 @@ namespace UGF.Database.Runtime
             return result.HasValue ? new DatabaseGetAsyncResult(result.Value) : new DatabaseGetAsyncResult();
         }
 
+        protected virtual Task OnAddAsync(TKey key, TValue value)
+        {
+            OnAdd(key, value);
+
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task<bool> OnRemoveAsync(TKey key)
+        {
+            bool result = OnRemove(key);
+
+            return Task.FromResult(result);
+        }
+
+        protected virtual Task<bool> OnTrySetAsync(TKey key, TValue value)
+        {
+            bool result = OnTrySet(key, value);
+
+            return Task.FromResult(result);
+        }
+
+        protected virtual Task<DatabaseGetAsyncResult<TValue>> OnTryGetAsync(TKey key)
+        {
+            return OnTryGet(key, out TValue value)
+                ? Task.FromResult(new DatabaseGetAsyncResult<TValue>(value))
+                : Task.FromResult(new DatabaseGetAsyncResult<TValue>());
+        }
+
+        protected abstract void OnAdd(TKey key, TValue value);
+        protected abstract bool OnRemove(TKey key);
         protected abstract bool OnTrySet(TKey key, TValue value);
-        protected abstract Task<bool> OnTrySetAsync(TKey key, TValue value);
         protected abstract bool OnTryGet(TKey key, out TValue value);
-        protected abstract Task<DatabaseGetAsyncResult<TValue>> OnTryGetAsync(TKey key);
     }
 }
