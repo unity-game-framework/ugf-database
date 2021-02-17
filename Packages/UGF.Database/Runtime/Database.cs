@@ -3,17 +3,26 @@ using System.Threading.Tasks;
 
 namespace UGF.Database.Runtime
 {
-    public abstract class Database<TKey, TValue> : DatabaseBase, IDatabase<TKey, TValue>
+    public abstract class Database<TKey, TValue> : IDatabase<TKey, TValue>
     {
-        public new event DatabaseValueHandler<TKey, TValue> Added;
-        public new event DatabaseKeyHandler<TKey> Removed;
-        public new event DatabaseValueHandler<TKey, TValue> Changed;
+        public event DatabaseValueHandler<TKey, TValue> Added;
+        public event DatabaseKeyHandler<TKey> Removed;
+        public event DatabaseValueHandler<TKey, TValue> Changed;
+
+        event DatabaseValueHandler IDatabase.Added { add { m_addedHandler += value; } remove { m_addedHandler -= value; } }
+        event DatabaseKeyHandler IDatabase.Removed { add { m_removedHandler += value; } remove { m_removedHandler -= value; } }
+        event DatabaseValueHandler IDatabase.Changed { add { m_changedHandler += value; } remove { m_changedHandler -= value; } }
+
+        private DatabaseValueHandler m_addedHandler;
+        private DatabaseKeyHandler m_removedHandler;
+        private DatabaseValueHandler m_changedHandler;
 
         public void Add(TKey key, TValue value)
         {
             OnAdd(key, value);
 
             Added?.Invoke(key, value);
+            m_addedHandler?.Invoke(key, value);
         }
 
         public async Task AddAsync(TKey key, TValue value)
@@ -21,6 +30,7 @@ namespace UGF.Database.Runtime
             await OnAddAsync(key, value);
 
             Added?.Invoke(key, value);
+            m_addedHandler?.Invoke(key, value);
         }
 
         public bool Remove(TKey key)
@@ -28,6 +38,7 @@ namespace UGF.Database.Runtime
             if (OnRemove(key))
             {
                 Removed?.Invoke(key);
+                m_removedHandler?.Invoke(key);
                 return true;
             }
 
@@ -39,6 +50,7 @@ namespace UGF.Database.Runtime
             if (await OnRemoveAsync(key))
             {
                 Removed?.Invoke(key);
+                m_removedHandler?.Invoke(key);
                 return true;
             }
 
@@ -58,6 +70,7 @@ namespace UGF.Database.Runtime
             if (OnTrySet(key, value))
             {
                 Changed?.Invoke(key, value);
+                m_changedHandler?.Invoke(key, value);
                 return true;
             }
 
@@ -77,6 +90,7 @@ namespace UGF.Database.Runtime
             if (await OnTrySetAsync(key, value))
             {
                 Changed?.Invoke(key, value);
+                m_changedHandler?.Invoke(key, value);
                 return true;
             }
 
@@ -103,33 +117,6 @@ namespace UGF.Database.Runtime
         public Task<DatabaseGetAsyncResult<TValue>> TryGetAsync(TKey key)
         {
             return OnTryGetAsync(key);
-        }
-
-        protected override void OnAdd(object key, object value)
-        {
-            OnAdd((TKey)key, (TValue)value);
-        }
-
-        protected override bool OnRemove(object key)
-        {
-            return OnRemove((TKey)key);
-        }
-
-        protected override bool OnTrySet(object key, object value)
-        {
-            return OnTrySet((TKey)key, (TValue)value);
-        }
-
-        protected override bool OnTryGet(object key, out object value)
-        {
-            if (OnTryGet((TKey)key, out TValue result))
-            {
-                value = result;
-                return true;
-            }
-
-            value = default;
-            return false;
         }
 
         protected virtual Task OnAddAsync(TKey key, TValue value)
@@ -164,5 +151,72 @@ namespace UGF.Database.Runtime
         protected abstract bool OnRemove(TKey key);
         protected abstract bool OnTrySet(TKey key, TValue value);
         protected abstract bool OnTryGet(TKey key, out TValue value);
+
+        void IDatabase.Add(object key, object value)
+        {
+            Add((TKey)key, (TValue)value);
+        }
+
+        Task IDatabase.AddAsync(object key, object value)
+        {
+            return AddAsync((TKey)key, (TValue)value);
+        }
+
+        bool IDatabase.Remove(object key)
+        {
+            return Remove((TKey)key);
+        }
+
+        Task<bool> IDatabase.RemoveAsync(object key)
+        {
+            return RemoveAsync((TKey)key);
+        }
+
+        void IDatabase.Set(object key, object value)
+        {
+            Set((TKey)key, (TValue)value);
+        }
+
+        bool IDatabase.TrySet(object key, object value)
+        {
+            return TrySet((TKey)key, (TValue)value);
+        }
+
+        Task IDatabase.SetAsync(object key, object value)
+        {
+            return SetAsync((TKey)key, (TValue)value);
+        }
+
+        Task<bool> IDatabase.TrySetAsync(object key, object value)
+        {
+            return TrySetAsync((TKey)key, (TValue)value);
+        }
+
+        object IDatabase.Get(object key)
+        {
+            return Get((TKey)key);
+        }
+
+        bool IDatabase.TryGet(object key, out object value)
+        {
+            if (TryGet((TKey)key, out TValue result))
+            {
+                value = result;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        async Task<object> IDatabase.GetAsync(object key)
+        {
+            return await GetAsync((TKey)key);
+        }
+
+        async Task<DatabaseGetAsyncResult> IDatabase.TryGetAsync(object key)
+        {
+            return await TryGetAsync((TKey)key);
+        }
     }
 }

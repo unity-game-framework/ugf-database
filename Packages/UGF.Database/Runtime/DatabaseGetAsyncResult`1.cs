@@ -19,5 +19,10 @@ namespace UGF.Database.Runtime
         {
             return HasValue;
         }
+
+        public static implicit operator DatabaseGetAsyncResult(DatabaseGetAsyncResult<TValue> result)
+        {
+            return result.HasValue ? new DatabaseGetAsyncResult(result.Value) : new DatabaseGetAsyncResult();
+        }
     }
 }
