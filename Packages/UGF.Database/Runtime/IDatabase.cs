@@ -4,8 +4,14 @@ namespace UGF.Database.Runtime
 {
     public interface IDatabase
     {
+        event DatabaseValueHandler Added;
+        event DatabaseKeyHandler Removed;
         event DatabaseValueHandler Changed;
 
+        void Add(object key, object value);
+        Task AddAsync(object key, object value);
+        bool Remove(object key);
+        Task<bool> RemoveAsync(object key);
         void Set(object key, object value);
         bool TrySet(object key, object value);
         Task SetAsync(object key, object value);
