@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-preview.2](https://github.com/unity-game-framework/ugf-database/releases/tag/1.0.0-preview.2) - 2021-02-27  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-database/milestone/2?closed=1)  
+    
+
+### Added
+
+- Add try get and get with generic type argument ([#7](https://github.com/unity-game-framework/ugf-database/pull/7))  
+    - Add `DatabaseExtensions` class with `Get<T>`, `TryGet<T>`, `GetAsync<T>` and `TryGetAsync<T>` extension methods for `IDatabase`.
+
 ## [1.0.0-preview.1](https://github.com/unity-game-framework/ugf-database/releases/tag/1.0.0-preview.1) - 2021-02-17  
 
 ### Release Notes
