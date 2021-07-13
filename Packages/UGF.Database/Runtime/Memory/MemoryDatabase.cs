@@ -13,7 +13,7 @@ namespace UGF.Database.Runtime.Memory
 
         public MemoryDatabase()
         {
-            m_values ??= new Dictionary<string, object>();
+            m_values = new Dictionary<string, object>();
 
             Values = new ReadOnlyDictionary<string, object>(m_values);
         }
@@ -22,19 +22,21 @@ namespace UGF.Database.Runtime.Memory
         {
         }
 
-        public MemoryDatabase(int capacity, IEqualityComparer<string> comparer) : this()
+        public MemoryDatabase(int capacity, IEqualityComparer<string> comparer)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException(nameof(capacity));
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
             m_values = new Dictionary<string, object>(capacity, comparer);
+
+            Values = new ReadOnlyDictionary<string, object>(m_values);
         }
 
         public MemoryDatabase(Dictionary<string, object> values) : this(values, EqualityComparer<string>.Default)
         {
         }
 
-        public MemoryDatabase(Dictionary<string, object> values, IEqualityComparer<string> comparer) : this()
+        public MemoryDatabase(Dictionary<string, object> values, IEqualityComparer<string> comparer)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
@@ -45,18 +47,22 @@ namespace UGF.Database.Runtime.Memory
             {
                 m_values.Add(pair.Key, pair.Value);
             }
+
+            Values = new ReadOnlyDictionary<string, object>(m_values);
         }
 
         public MemoryDatabase(IDictionary<string, object> values) : this(values, EqualityComparer<string>.Default)
         {
         }
 
-        public MemoryDatabase(IDictionary<string, object> values, IEqualityComparer<string> comparer) : this()
+        public MemoryDatabase(IDictionary<string, object> values, IEqualityComparer<string> comparer)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
             m_values = new Dictionary<string, object>(values, comparer);
+
+            Values = new ReadOnlyDictionary<string, object>(m_values);
         }
 
         public Dictionary<string, object>.Enumerator GetEnumerator()
