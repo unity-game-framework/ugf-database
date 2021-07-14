@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0-preview](https://github.com/unity-game-framework/ugf-database/releases/tag/1.1.0-preview) - 2021-07-14  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-database/milestone/5?closed=1)  
+    
+
+### Added
+
+- Add Clear and ClearAsync methods ([#13](https://github.com/unity-game-framework/ugf-database/pull/13))  
+    - Add `Cleared` event for `IDatabase` and `IDatabase<TKey, TValue>` interfaces and related implementations.
+    - Add `Clear` and `ClearAsync` methods for `IDatabase` interface and related implementations.
+    - Add implementation of `Clear` method for `PrefsDatabase` to clear all player prefs.
+    - Add implementation of `Clear` method for `MemoryDatabase` to clear all values.
+
 ## [1.0.0-preview.4](https://github.com/unity-game-framework/ugf-database/releases/tag/1.0.0-preview.4) - 2021-07-13  
 
 ### Release Notes

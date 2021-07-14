@@ -4,7 +4,7 @@ UGF.Database
 
 ## Info
 
-- **Version**: `1.0.0-preview.4`
+- **Version**: `1.1.0-preview`
 - **Unity**: `2020.2`
 - **API Compatibility Level**: `.NET Standard 2.0`
 
