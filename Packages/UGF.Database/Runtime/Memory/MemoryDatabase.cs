@@ -85,6 +85,11 @@ namespace UGF.Database.Runtime.Memory
             return m_values.Remove(key);
         }
 
+        protected override void OnClear()
+        {
+            m_values.Clear();
+        }
+
         protected override void OnSet(string key, object value)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));
