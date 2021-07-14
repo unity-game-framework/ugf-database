@@ -30,6 +30,11 @@ namespace UGF.Database.Runtime.Prefs
             return false;
         }
 
+        protected override void OnClear()
+        {
+            PlayerPrefs.DeleteAll();
+        }
+
         protected override void OnSet(string key, string value)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("Value cannot be null or empty.", nameof(key));

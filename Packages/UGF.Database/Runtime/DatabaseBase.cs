@@ -8,6 +8,7 @@ namespace UGF.Database.Runtime
         public event DatabaseValueHandler Added;
         public event DatabaseKeyHandler Removed;
         public event DatabaseValueHandler Changed;
+        public event Action Cleared;
 
         public void Add(object key, object value)
         {
@@ -53,6 +54,20 @@ namespace UGF.Database.Runtime
             }
 
             return false;
+        }
+
+        public void Clear()
+        {
+            OnClear();
+
+            Cleared?.Invoke();
+        }
+
+        public async Task ClearAsync()
+        {
+            await OnClearAsync();
+
+            Cleared?.Invoke();
         }
 
         public void Set(object key, object value)
@@ -115,6 +130,13 @@ namespace UGF.Database.Runtime
             return Task.FromResult(result);
         }
 
+        protected virtual Task OnClearAsync()
+        {
+            OnClear();
+
+            return Task.CompletedTask;
+        }
+
         protected virtual Task OnSetAsync(object key, object value)
         {
             OnSet(key, value);
@@ -131,6 +153,7 @@ namespace UGF.Database.Runtime
 
         protected abstract void OnAdd(object key, object value);
         protected abstract bool OnRemove(object key);
+        protected abstract void OnClear();
         protected abstract void OnSet(object key, object value);
         protected abstract bool OnTryGet(object key, out object value);
     }
